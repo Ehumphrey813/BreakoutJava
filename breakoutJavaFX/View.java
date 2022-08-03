@@ -19,7 +19,7 @@ public class View implements EventHandler<KeyEvent>
     public int width;       // width of window
     public int height;      // height of window
 
-    // usr interface objects
+    // user interface objects
     public Pane pane;       // basic layout pane
     public Canvas canvas;   // canvas to draw game on
     public Label infoText;  // info at top of screen
@@ -78,12 +78,12 @@ public class View implements EventHandler<KeyEvent>
         // and provide a handle method to be called when a key is pressed.
         scene.setOnKeyPressed(this);
 
-        // put the scene in the winodw and display it
+        // put the scene in the window and display it
         window.setScene(scene);
         window.show();
     }
 
-    // Event handler for key presses - it just passes th event to the controller
+    // Event handler for key presses - it just passes the event to the controller
     public void handle(KeyEvent event)
     {
         // send the event to the controller
@@ -93,9 +93,9 @@ public class View implements EventHandler<KeyEvent>
     // drawing the game
     public void drawPicture()
     {
-        // the ball movement is runnng 'i the background' so we have
+        // the ball movement is running 'in the background' so we have
         // add the following line to make sure
-        synchronized( Model.class )   // Make thread safe (because the bal
+        synchronized( Model.class )   // Make thread safe (because the ball)
         {
             GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -111,11 +111,7 @@ public class View implements EventHandler<KeyEvent>
             displayGameObj( gc, ball );   // Display the Ball
             displayGameObj( gc, bat  );   // Display the Bat
 
-            // *[3]****************************************************[3]*
-            // * Display the bricks that make up the game                 *
-            // * Fill in code to display bricks from the ArrayList        *
-            // * Remember only a visible brick is to be displayed         *
-            // ************************************************************
+            
             for (GameObj brick: bricks) {
                 if (brick.visible) {
                     displayGameObj(gc, brick);

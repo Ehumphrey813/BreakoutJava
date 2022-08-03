@@ -27,7 +27,7 @@ public class Model
 
     public int HIT_BRICK      = 50;     // Score for hitting a brick
     public int HIT_BOTTOM     = -100;   // Score (penalty) for hitting the bottom of the screen
-    public int HIT_BOTTOM_LIFE = -1;
+    public int HIT_BOTTOM_LIFE = -1;	// live lost when ball hits bottom of screen
     // The other parts of the model-view-controller setup
     View view;
     Controller controller;
@@ -60,11 +60,11 @@ public class Model
     // Initialise the game - reset the score and create the game objects 
     public void initialiseGame()
     {       
+    	lives = 3;
         score = 0;
         ball   = new GameObj(width/2, height/2, BALL_SIZE, BALL_SIZE, Color.RED );
-        bat    = new GameObj(width/2, height - BRICK_HEIGHT*3/2, BRICK_WIDTH*3, 
-            BRICK_HEIGHT/4, Color.RED);
-            bricks = new ArrayList<>();
+        bat    = new GameObj(width/2, height+40 - BRICK_HEIGHT*3/2, BRICK_WIDTH*3, BRICK_HEIGHT/4, Color.RED);
+        bricks = new ArrayList<>();
 
        
         int WALL_1 = 240; // how far down the screen the wall starts
@@ -76,10 +76,12 @@ public class Model
      
         
         int NUM_BRICKS = width/BRICK_WIDTH; // how many bricks fit on screen
+        
+        
         for (int i=0; i < NUM_BRICKS; i++) {
             GameObj brick = new GameObj(BRICK_WIDTH*i, WALL_1, BRICK_WIDTH, BRICK_HEIGHT, Color.BLUE);
             bricks.add(brick);      // add this brick to the list of bricks
-    
+       
         }
         for (int j=0; j < NUM_BRICKS; j++) {
             GameObj brick = new GameObj(BRICK_WIDTH*j, WALL_2, BRICK_WIDTH, BRICK_HEIGHT, Color.RED);
@@ -94,7 +96,7 @@ public class Model
             bricks.add(brick);    
         }
         for (int m=0; m < NUM_BRICKS; m++) {
-            GameObj brick = new GameObj(BRICK_WIDTH*m, WALL_5, BRICK_WIDTH, BRICK_HEIGHT, Color.ORANGE);
+            GameObj brick = new GameObj(BRICK_WIDTH*m, WALL_5, BRICK_WIDTH, BRICK_HEIGHT, Color.LIGHTPINK);
             bricks.add(brick);
         }
       
@@ -113,16 +115,16 @@ public class Model
     // When we use more than one thread, we have to take care that they don't
     // interfere with each other (for example, one thread changing the value of 
     // a variable at the same time the other is reading it). We do this by 
-    // SYNCHRONIZING methods. For any object, only one synchronized method can
+    // SYNCHRONIZING methods. For any object, only one synchronised method can
     // be running at a time - if another thread tries to run the same or another
-    // synchronized method on the same object, it will stop and wait for the
+    // Synchronised method on the same object, it will stop and wait for the
     // first one to finish.
     
     // Start the animation thread
     public void startGame()
     {
         
-        Thread t = new Thread( this::runGame );     // create a thread runnng the runGame method
+        Thread t = new Thread( this::runGame );     // create a thread running the runGame method
         t.setDaemon(true);                          // Tell system this thread can die when it finishes
         t.start();                                  // Start the thread running
     }   
@@ -153,7 +155,7 @@ public class Model
         // move the ball one step (the ball knows which direction it is moving in)
         ball.moveX(BALL_MOVE);                      
         ball.moveY(BALL_MOVE);
-        // get the current ball possition (top left corner)
+        // get the current ball position (top left corner)
         int x = ball.topX;  
         int y = ball.topY;
         // Deal with possible edge of board hit
@@ -163,7 +165,7 @@ public class Model
         { 
             ball.changeDirectionY(); 
             addToScore( HIT_BOTTOM );     // score penalty for hitting the bottom of the screen
-            decreaseLives( HIT_BOTTOM_LIFE );
+            decreaseLives( HIT_BOTTOM_LIFE ); // live's lost each time the ball hits the bottom
         }
         if (y <= 0 + M)  ball.changeDirectionY();
 
@@ -200,13 +202,15 @@ public class Model
     
     
     // Methods for accessing and updating values
-    // these are all synchronized so that the can be called by the main thread 
+    // these are all synchronised so that the can be called by the main thread 
     // or the animation thread safely
     
     // Change game running state - set to false to stop the game
     public synchronized void setGameRunning(Boolean value)
     {  
+    	
         gameRunning = value;
+        
     }
     
     
